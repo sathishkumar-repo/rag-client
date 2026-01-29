@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "set NODE_EXTRA_CA_CERTS=zscaler.pem && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.36.10",
     "next": "16.1.4",
     "react": "19.2.3",
     "react-dom": "19.2.3"

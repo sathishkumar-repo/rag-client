@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/proxy copy.ts_bkp"  ],
   "exclude": ["node_modules"]
 }
