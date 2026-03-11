@@ -7,27 +7,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/proxy/:path*",
-        destination: "http://13.60.240.198:8000/:path*",
-      },
-    ];
-  },
-  async headers() {
-    return [
-      {
-        source: "/api/proxy/:path*",
-        headers: [
-          {
-            key: "X-Forwarded-Proto",
-            value: "https",
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;
