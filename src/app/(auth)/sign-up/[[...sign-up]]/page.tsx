@@ -1,12 +1,11 @@
-import React from 'react'
-import { SignUp } from '@clerk/nextjs';
+import { SignUp } from "@clerk/nextjs";
 
-const SignUpPage = () => {
+function SignUpPage() {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <SignUp />
     </div>
-  )
+  );
 }
 
-export default SignUpPage
+export default SignUpPage;

@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/proxy copy.ts_bkp", "src/app/(dashboard)/projects/[projectId]/page.tsx-11"  ],
+  ],
   "exclude": ["node_modules"]
 }

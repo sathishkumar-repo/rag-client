@@ -1,73 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RAG Platform
 
-## Getting Started
+## 00_Setup
 
-First, run the development server:
+- Ensure that you have install node
+- Official docs : https://nextjs.org/docs/app/getting-started/installation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 01_ClerkAuth
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Set up middleware and wrap app with Clerk Provider
+  - Docs: https://clerk.com/docs/nextjs/getting-started/quickstart
+- Build custom `/sign-in` and `/sign-up` pages
+  - Docs: https://clerk.com/docs/nextjs/guides/development/custom-sign-in-or-up-page
+  - Ensure all auth routes are covered:
+    - `/sign-in` (main sign-in page)
+    - `/sign-in/sso` (SSO authentication)
+    - `/sign-in/password-reset` (password reset flow)
+- Maintain auth flow using Clerk's `auth` helper
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 02_Sidebar
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Download the `components` from the course resources
+- Create Layout and Add Sidebar to it.
+- Install required dependencies - `lucide-react`
 
-## Learn More
+## 03_ProjectsPage
 
-To learn more about Next.js, take a look at the following resources:
+- Build Projects Page
+- Install required dependencies - `react-hot-toast`
+- `apiClient` to handle backend APIs  
+  API endpoints:
+  - GET `/api/projects/` ~ List all projects
+  - POST `/api/projects/` ~ Create a new project
+  - DELETE `/api/projects/{project_id}` ~ Delete a specific project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 04_SpecificProjectPage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Create dynamic route to handle all projects
+- Create SpecificProjectPage
+- Set up `apiClient` to handle backend APIs  
+  Integrate API endpoints with Frontend:
 
-## Deploy on Vercel
+  Project Routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  - GET `/api/projects/{projectId}` ~ Get specific project data
+  - GET `/api/projects/{projectId}/chats` ~ Get specific project chats
+  - GET `/api/projects/{projectId}/settings` ~ Get specific project settings
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  Project File Routes
 
+  - GET `/api/projects/{projectId}/files`
 
+  Chat Routes
 
-🔒 Corporate Proxy Setup (Zscaler)
-If you are developing on a corporate machine behind a Zscaler proxy, you will likely encounter SSL/Certificate errors (UNABLE_TO_GET_ISSUER_CERT_LOCALLY) when running npm or supabase.
+  - POST `/api/chats/` ~ Create a new chat
+  - DELETE `/api/chats/{chat_id}` ~ Delete a specific chat
 
-Step 1: Generate the Certificate
-  Run the following command in PowerShell (as Administrator) from the root of this project. This will "grab" your company's Zscaler certificate and save it as zscaler.pem:
+- Create a function `loadUserData` to fetch all specific user data using Promise.all - project's data , chats, settings, files
+- `handleCreateNewChat` `handleDeleteChat`
+- Add variable types in `lib/types` to get rid of typescript errors
 
-  Powershell
-    $cert = Get-ChildItem Cert:\CurrentUser\Root | Where-Object { $_.Subject -like "*Zscaler*" } | Select-Object -First 1
-    if ($cert) {
-        $base64 = [System.Convert]::ToBase64String($cert.RawData, "InsertLineBreaks")
-        "-----BEGIN CERTIFICATE-----`n$base64`n-----END CERTIFICATE-----" | Out-File "zscaler.pem" -Encoding ascii
-        Write-Host "✅ zscaler.pem created successfully!" -ForegroundColor Green
-    } else {
-        Write-Host "❌ Zscaler certificate not found in your system store." -ForegroundColor Red
-    }
+## 05_SpecificProjectSettings
 
-Step 2: Configure Environment
-To ensure Node.js and Supabase trust this certificate, you must set the following environment variables in your terminal session before starting the app:
-  Powershell
-    $env:NODE_EXTRA_CA_CERTS="zscaler.pem"
-    $env:SSL_CERT_FILE="zscaler.pem"
-    $env:DENO_CERT="zscaler.pem"
+- `handleDraftSettings` - will be able to play with it.
+- `apiClient` add put method to update the settings.
+- `handlePublishSettings` - will do the API call.
+  - PUT `/api/projects/{projectId}/settings` ~ Update specific project settings
 
-  Cmd
-    set NODE_EXTRA_CA_CERTS=zscaler.pem
-    set SSL_CERT_FILE=zscaler.pem
-    set DENO_CERT=zscaler.pem
+## 06_AWS-S3
 
-Step 3: Run the Application
+- Integrate PreSigned URL with Frontend
+- **API endpoints**
+  - POST `/api/projects/{project_id}/files/upload-url` ~ Generate presigned URL for frontend file upload
+  - POST `/api/projects/{project_id}/files/confirm` ~ Confirm file upload to S3
+  - POST `/{project_id}/urls` ~ Add website URL to database
+  - DELETE `/api/projects/{project_id}/files/{file_id}` ~ To delete the document
+- `apiClient` - add uploadtos3 method
+- `handleDocumentUpload` - will upload the document to s3 and confirm
+- `handleUrlAdd` - add the url
+- `handleDocumentDelete` - will delete the document from s3 and database
 
-  npm run dev
-  npx supabase start
+## 07_RAG-Ingestion
 
-Note: The zscaler.pem file is ignored by git and will not be uploaded to the repository. Each developer behind a proxy must generate their own local copy.
+- will fetch the updates via Short Polling in the backend
+- **API endpoints**
+  - GET `/api/projects/{project_id}/files/{file_id}/chunks` ~ Get project document chunks
+
+## 08_Chat
+
+- Build Chat Page
+- GET `/api/chats/{chat_id}` ~ Get a specific chat
+- POST `/api/projects/{project_id}/chats/{chat_id}/messages` ~ Send a message to a chat
+
+## 09_Retrieval
+
+- Just Chat with LLM 🤟
+- **No Additional changes on frontend**
