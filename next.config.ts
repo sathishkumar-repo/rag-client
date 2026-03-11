@@ -15,6 +15,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        headers: [
+          {
+            key: "X-Forwarded-Proto",
+            value: "https",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
